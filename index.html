@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="College Ecosystem — Stationery Store, Canteen Pre-ordering & Vendor Dashboard" />
+    <title>College Ecosystem</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        'primary-dark': '#4f46e5',
+                        secondary: '#ec4899',
+                        surface: '#1e293b',
+                        bg: '#0f172a',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn .35s ease both',
+                        'slide-up': 'slideUp .4s ease both',
+                        'pop-in': 'popIn .3s cubic-bezier(.175,.885,.32,1.275) both',
+                    },
+                    keyframes: {
+                        fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
+                        slideUp: { from: { opacity: 0, transform: 'translateY(20px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+                        popIn: { from: { opacity: 0, transform: 'scale(.8)' }, to: { opacity: 1, transform: 'scale(1)' } },
+                    },
+                },
+            },
+        };
+    </script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- Html5-QrcodeScanner -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .15);
+            border-radius: 999px;
+        }
+
+        /* Custom toggle switch styling */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            inset: 0;
+            cursor: pointer;
+            background: #334155;
+            border-radius: 999px;
+            transition: .3s;
+        }
+
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        input:checked+.toggle-slider {
+            background: #6366f1;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Nav pill active */
+        .nav-pill {
+            transition: background .25s, color .25s;
+        }
+
+        .nav-pill.active {
+            background: rgba(99, 102, 241, .25);
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        /* Card glow on hover */
+        .product-card:hover {
+            box-shadow: 0 0 0 1px rgba(99, 102, 241, .4), 0 20px 40px rgba(0, 0, 0, .4);
+        }
+
+        /* QR reader overrides */
+        #qr-reader {
+            border: 2px dashed rgba(255, 255, 255, .12) !important;
+            border-radius: 1rem !important;
+            overflow: hidden;
+        }
+
+        #qr-reader video {
+            border-radius: .75rem;
+        }
+
+        #qr-reader__scan_region img {
+            display: none;
+        }
+
+        #qr-reader__dashboard_section_csr button,
+        #html5-qrcode-button-camera-start,
+        #html5-qrcode-button-camera-stop {
+            background: linear-gradient(135deg, #6366f1, #ec4899) !important;
+            color: #fff !important;
+            border: none !important;
+            border-radius: .75rem !important;
+            padding: .5rem 1.5rem !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            margin-top: .5rem !important;
+        }
+
+        #qr-reader__dashboard_section_swaplink {
+            color: #a5b4fc !important;
+        }
+
+        #qr-reader__header_message {
+            color: #94a3b8 !important;
+            font-size: .8rem !important;
+        }
+
+        .hide-scroll {
+            scrollbar-width: none;
+        }
+
+        .hide-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, .7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            color: #fff;
+            font-weight: 600;
+            border-radius: .75rem;
+            padding: .55rem 1.25rem;
+            transition: opacity .2s, transform .15s;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: scale(.97);
+        }
+
+        .btn-primary:disabled {
+            opacity: .4;
+            pointer-events: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, .2);
+            color: #cbd5e1;
+            font-weight: 500;
+            border-radius: .75rem;
+            padding: .5rem 1.25rem;
+            transition: background .2s, border-color .2s, transform .15s;
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, .06);
+            border-color: rgba(255, 255, 255, .4);
+            color: #fff;
+        }
+
+        .btn-outline:active {
+            transform: scale(.97);
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(0, 0, 0, .25);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: .75rem;
+            padding: .65rem 1rem;
+            color: #f8fafc;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .2);
+        }
+
+        .input-field::placeholder {
+            color: #475569;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+            padding: .2rem .6rem;
+            border-radius: 999px;
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+        }
+
+        .badge-success {
+            background: rgba(34, 197, 94, .15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, .3);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, .15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, .3);
+        }
+
+        .badge-warn {
+            background: rgba(234, 179, 8, .15);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, .3);
+        }
+
+        .badge-info {
+            background: rgba(99, 102, 241, .2);
+            color: #a5b4fc;
+            border: 1px solid rgba(99, 102, 241, .35);
+        }
+
+        /* Pulse dot */
+        .pulse-dot {
+            animation: pulseDot 1.4s infinite;
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .5;
+                transform: scale(1.3)
+            }
+        }
+
+        /* Modal backdrop */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, .75);
+            backdrop-filter: blur(6px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════ NAV BAR ═══════════════════ -->
+    <header class="sticky top-0 z-50 glass border-b border-white/[.07] shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center gap-2 shrink-0">
+                <div
+                    class="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary to-secondary flex items-center justify-center font-black text-sm shadow-lg shadow-primary/40">
+                    CE</div>
+                <span class="text-lg font-bold tracking-tight hidden sm:block">College Ecosystem</span>
+            </div>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/[.07]">
+                <button data-nav="store" class="nav-pill active px-4 py-2 rounded-lg text-sm flex items-center gap-1.5">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Store
+                </button>
+                <button data-nav="canteen"
+                    class="nav-pill px-4 py-2 rounded-lg text-sm text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="utensils" class="w-4 h-4"></i> Canteen
+                </button>
+                <button data-nav="vendor"
+                    class="nav-pill px-4 py-2 rounded-lg text-sm text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Vendor
+                </button>
+            </nav>
+
+            <!-- Mobile hamburger -->
+            <button id="mob-menu-btn" class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Nav Dropdown -->
+        <div id="mob-nav" class="hidden md:hidden px-4 pb-4 flex flex-col gap-1 border-t border-white/[.07]">
+            <button data-nav="store"
+                class="nav-pill active px-4 py-2.5 rounded-lg text-sm flex items-center gap-2 mt-2">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i> Store
+            </button>
+            <button data-nav="canteen"
+                class="nav-pill px-4 py-2.5 rounded-lg text-sm flex items-center gap-2 text-slate-400">
+                <i data-lucide="utensils" class="w-4 h-4"></i> Canteen
+            </button>
+            <button data-nav="vendor"
+                class="nav-pill px-4 py-2.5 rounded-lg text-sm flex items-center gap-2 text-slate-400">
+                <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Vendor
+            </button>
+        </div>
+    </header>
+
+    <!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+    <main id="app" class="max-w-7xl mx-auto px-4 py-8 min-h-screen"></main>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="text-center text-slate-600 text-sm py-8 border-t border-white/[.05]">
+        &copy; 2026 College Ecosystem &mdash; All rights reserved.
+    </footer>
+
+    <!-- ═══════════════════ TOAST ═══════════════════ -->
+    <div id="toasts" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ═══════════════════ QR ORDER MODAL ═══════════════════ -->
+    <div id="qr-modal" class="hidden fixed inset-0 z-[150] modal-backdrop flex items-center justify-center p-4">
+        <div class="glass rounded-2xl p-8 max-w-sm w-full text-center animate-pop-in relative">
+            <button id="qr-modal-close"
+                class="absolute top-4 right-4 text-slate-500 hover:text-white transition-colors p-1">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div
+                class="w-16 h-16 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="check-circle" class="w-8 h-8 text-green-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-1">Order Confirmed!</h2>
+            <p class="text-slate-400 text-sm mb-6">Show this QR at the canteen counter.</p>
+            <div class="bg-white p-3 rounded-xl inline-block mb-6 shadow-2xl shadow-primary/20">
+                <div id="qrcode-target"></div>
+            </div>
+            <div class="glass rounded-xl p-4 text-sm text-left space-y-2">
+                <div class="flex justify-between"><span class="text-slate-400">Order ID</span><span id="m-id"
+                        class="font-mono font-bold"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Pickup</span><span id="m-pick"
+                        class="font-semibold text-primary"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Total</span><span id="m-total"
+                        class="font-bold text-secondary"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════
+        // ██████████  SIMULATED DATABASE  ██████████
+        // ═══════════════════════════════════════════════════════
+        const DB = {
+            products: [
+                { id: 'p1', name: 'Ruled Notebook', category: 'Stationery', price: 50, stock: 15, requests: 0, img: 'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=300&h=300&fit=crop' },
+                { id: 'p2', name: 'Premium Pen Set', category: 'Stationery', price: 120, stock: 0, requests: 5, img: 'https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=300&h=300&fit=crop' },
+                { id: 'p3', name: 'College Hoodie (Navy)', category: 'Merch', price: 850, stock: 3, requests: 0, img: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300&h=300&fit=crop' },
+                { id: 'p4', name: 'Scientific Calc', category: 'Electronics', price: 950, stock: 0, requests: 12, img: 'https://images.unsplash.com/photo-1587145820266-a5951ee6f620?w=300&h=300&fit=crop' },
+                { id: 'p5', name: 'Sticky Notes (200pc)', category: 'Stationery', price: 40, stock: 50, requests: 0, img: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=300&h=300&fit=crop' },
+                { id: 'p6', name: 'College Coffee Mug', category: 'Merch', price: 250, stock: 2, requests: 1, img: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=300&h=300&fit=crop' },
+                { id: 'p7', name: 'Whiteboard Marker Set', category: 'Stationery', price: 80, stock: 0, requests: 7, img: 'https://images.unsplash.com/photo-1587614313085-5da51cebd8ac?w=300&h=300&fit=crop' },
+                { id: 'p8', name: 'College Water Bottle', category: 'Merch', price: 350, stock: 8, requests: 0, img: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300&h=300&fit=crop' },
+            ],
+            menu: [
+                { id: 'm1', name: 'Classic Burger', category: 'Snacks', price: 80, available: true, img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop' },
+                { id: 'm2', name: 'Cold Coffee', category: 'Beverages', price: 60, available: true, img: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=300&h=300&fit=crop' },
+                { id: 'm3', name: 'Veggie Sandwich', category: 'Snacks', price: 50, available: true, img: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=300&h=300&fit=crop' },
+                { id: 'm4', name: 'Masala Dosa', category: 'Meals', price: 90, available: false, img: 'https://images.unsplash.com/photo-1630383249863-714088898144?w=300&h=300&fit=crop' },
+                { id: 'm5', name: 'Fresh Lime Soda', category: 'Beverages', price: 40, available: true, img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300&h=300&fit=crop' },
+                { id: 'm6', name: 'Paneer Rolls', category: 'Snacks', price: 70, available: true, img: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=300&h=300&fit=crop' },
+                { id: 'm7', name: 'Mango Smoothie', category: 'Beverages', price: 75, available: true, img: 'https://images.unsplash.com/photo-1570696516188-ade861b84a49?w=300&h=300&fit=crop' },
+                { id: 'm8', name: 'Veg Fried Rice', category: 'Meals', price: 100, available: true, img: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&h=300&fit=crop' },
+            ],
+            orders: [],
+        };
+
+        // Persist to localStorage & restore
+        const KEYS = { products: 'ce_products', menu: 'ce_menu', orders: 'ce_orders' };
+        const persist = () => {
+            localStorage.setItem(KEYS.products, JSON.stringify(DB.products));
+            localStorage.setItem(KEYS.menu, JSON.stringify(DB.menu));
+            localStorage.setItem(KEYS.orders, JSON.stringify(DB.orders));
+        };
+        const restore = () => {
+            if (localStorage.getItem(KEYS.products)) DB.products = JSON.parse(localStorage.getItem(KEYS.products));
+            if (localStorage.getItem(KEYS.menu)) DB.menu = JSON.parse(localStorage.getItem(KEYS.menu));
+            if (localStorage.getItem(KEYS.orders)) DB.orders = JSON.parse(localStorage.getItem(KEYS.orders));
+        };
+        restore();
+
+        // ═══════════════════════════════════════════════════════
+        // ██████████  TOAST  ██████████
+        // ═══════════════════════════════════════════════════════
+        function toast(msg, type = 'info') {
+            const wrap = document.getElementById('toasts');
+            const el = document.createElement('div');
+            const colors = { success: 'bg-green-600', error: 'bg-red-600', info: 'bg-primary' };
+            const ic = { success: 'check-circle', error: 'alert-circle', info: 'info' };
+            el.className = `flex items-center gap-3 px-4 py-3 rounded-xl text-white text-sm font-medium shadow-xl pointer-events-auto animate-slide-up ${colors[type]}`;
+            el.innerHTML = `<i data-lucide="${ic[type]}" class="w-4 h-4 shrink-0"></i><span>${msg}</span>`;
+            wrap.appendChild(el);
+            lucide.createIcons({ nodes: [el] });
+            setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateY(10px)'; el.style.transition = 'all .3s'; setTimeout(() => el.remove(), 300); }, 3000);
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ██████████  ROUTER  ██████████
+        // ═══════════════════════════════════════════════════════
+        let currentView = 'store';
+        let vendorCleanup = null;
+
+        function navigate(view) {
+            if (vendorCleanup) { vendorCleanup(); vendorCleanup = null; }
+            currentView = view;
+            document.querySelectorAll('[data-nav]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.nav === view);
+                if (btn.dataset.nav !== view) btn.classList.add('text-slate-400');
+                else btn.classList.remove('text-slate-400');
+            });
+            document.getElementById('mob-nav').classList.add('hidden');
+            const app = document.getElementById('app');
+            app.innerHTML = '';
+            if (view === 'store') renderStore(app);
+            else if (view === 'canteen') renderCanteen(app);
+            else renderVendor(app);
+            lucide.createIcons();
+        }
+
+        document.querySelectorAll('[data-nav]').forEach(btn =>
+            btn.addEventListener('click', e => navigate(e.currentTarget.dataset.nav))
+        );
+        document.getElementById('mob-menu-btn').addEventListener('click', () =>
+            document.getElementById('mob-nav').classList.toggle('hidden')
+        );
+
+        // ═══════════════════════════════════════════════════════
+        // ██████████  STORE VIEW  ██████████
+        // ═══════════════════════════════════════════════════════
+        function renderStore(app) {
+            app.innerHTML = `
+    <div class="animate-slide-up">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold mb-1">Stationery &amp; Merch Store</h1>
+        <p class="text-slate-400">Everything you need for college life, all in one place.</p>
+      </div>
+
+      <!-- Search + Filter -->
+      <div class="glass rounded-2xl p-4 mb-8 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+        <div class="relative flex-grow text-slate-400 focus-within:text-slate-200 transition-colors">
+          <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"></i>
+          <input id="st-search" type="text" placeholder="Search products or categories…" class="input-field pl-10">
+        </div>
+        <div class="flex gap-2 overflow-x-auto hide-scroll pb-0.5">
+          ${['All', 'Stationery', 'Merch', 'Electronics'].map(c =>
+                `<button class="cat-btn whitespace-nowrap px-3 py-1.5 rounded-lg text-sm font-medium transition-all border border-white/[.08] hover:border-primary/50 hover:text-white text-slate-400 ${c === 'All' ? '!border-primary !text-white bg-primary/20' : ''}" data-cat="${c}">${c}</button>`
+            ).join('')}
+        </div>
+      </div>
+
+      <!-- Product Grid -->
+      <div id="store-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+    </div>
+  `;
+            lucide.createIcons();
+
+            const grid = document.getElementById('store-grid');
+            let searchTerm = '', activeCat = 'All';
+
+            function renderGrid() {
+                const filtered = DB.products.filter(p => {
+                    const q = searchTerm.toLowerCase();
+                    const matchesSearch = p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
+                    const matchesCat = activeCat === 'All' || p.category === activeCat;
+                    return matchesSearch && matchesCat;
+                });
+
+                if (!filtered.length) {
+                    grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 flex flex-col items-center gap-3">
+        <i data-lucide="search-x" class="w-12 h-12 opacity-40"></i>
+        <p>No products match your search.</p>
+      </div>`;
+                    lucide.createIcons();
+                    return;
+                }
+
+                grid.innerHTML = filtered.map((p, i) => `
+      <div class="product-card glass rounded-2xl overflow-hidden flex flex-col transition-all duration-300 animate-slide-up" style="animation-delay:${i * 40}ms">
+        <div class="relative h-44 overflow-hidden group">
+          <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy"
+            onerror="this.src='https://via.placeholder.com/300x300/1e293b/6366f1?text=${encodeURIComponent(p.name)}'">
+          <div class="absolute inset-0 bg-gradient-to-t from-bg/80 to-transparent"></div>
+          <span class="absolute top-3 right-3 badge ${p.stock > 0 ? 'badge-success' : 'badge-danger'}">
+            ${p.stock > 0 ? `<i data-lucide="check" class="w-3 h-3"></i> ${p.stock} left` : `<i data-lucide="alert-circle" class="w-3 h-3"></i> Out of Stock`}
+          </span>
+          <span class="absolute bottom-3 left-3 badge badge-info">${p.category}</span>
+        </div>
+        <div class="p-4 flex flex-col flex-grow">
+          <h3 class="font-bold text-base leading-tight mb-1 flex-grow">${p.name}</h3>
+          <p class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-4">₹${p.price}</p>
+          ${p.stock > 0
+                        ? `<button class="btn-outline w-full justify-center text-sm gap-2 !cursor-default opacity-60">
+                <i data-lucide="store" class="w-4 h-4"></i> Available In-Store
+               </button>`
+                        : `<button class="btn-primary w-full justify-center text-sm restock-btn" data-id="${p.id}">
+                <i data-lucide="bell-ring" class="w-4 h-4"></i> Request Restock${p.requests > 0 ? ` (${p.requests})` : ''}
+               </button>`
+                    }
+        </div>
+      </div>
+    `).join('');
+                lucide.createIcons();
+
+                grid.querySelectorAll('.restock-btn').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        const id = e.currentTarget.dataset.id;
+                        const p = DB.products.find(x => x.id === id);
+                        p.requests++;
+                        persist();
+                        toast(`Restock requested for "${p.name}"! 🔔`, 'success');
+                        e.currentTarget.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Requested (${p.requests})`;
+                        e.currentTarget.disabled = true;
+                        lucide.createIcons({ nodes: [e.currentTarget] });
+                    });
+                });
+            }
+
+            document.getElementById('st-search').addEventListener('input', e => { searchTerm = e.target.value; renderGrid(); });
+            app.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    activeCat = e.currentTarget.dataset.cat;
+                    app.querySelectorAll('.cat-btn').forEach(b => {
+                        b.classList.remove('!border-primary', '!text-white', 'bg-primary/20');
+                        b.classList.add('border-white/[.08]', 'text-slate-400');
+                    });
+                    e.currentTarget.classList.add('!border-primary', '!text-white', 'bg-primary/20');
+                    e.currentTarget.classList.remove('border-white/[.08]', 'text-slate-400');
+                    renderGrid();
+                });
+            });
+
+            renderGrid();
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ██████████  CANTEEN VIEW  ██████████
+        // ═══════════════════════════════════════════════════════
+        function renderCanteen(app) {
+            let cart = [];
+
+            app.innerHTML = `
+    <div class="animate-slide-up">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold mb-1">Canteen Pre-ordering</h1>
+        <p class="text-slate-400">Order ahead, skip the queue, eat on time. 🍔</p>
+      </div>
+
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Menu -->
+        <div class="flex-grow min-w-0">
+          <div id="canteen-categories" class="flex gap-2 overflow-x-auto hide-scroll pb-2 mb-6">
+            ${['All', 'Snacks', 'Meals', 'Beverages'].map(c =>
+                `<button class="can-cat whitespace-nowrap px-4 py-2 rounded-xl text-sm font-medium border border-white/[.08] transition-all hover:border-primary/50 hover:text-white text-slate-400 ${c === 'All' ? '!border-primary !text-white bg-primary/20' : ''}" data-ccat="${c}">${c}</button>`
+            ).join('')}
+          </div>
+          <div id="menu-grid" class="grid sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- Cart -->
+        <div class="w-full lg:w-80 shrink-0">
+          <div class="glass rounded-2xl p-6 sticky top-24">
+            <h3 class="text-lg font-bold mb-4 pb-4 border-b border-white/[.08] flex items-center gap-2">
+              <i data-lucide="shopping-cart" class="w-5 h-5 text-secondary"></i> Your Cart
+            </h3>
+            <div id="cart-list" class="min-h-[120px] max-h-72 overflow-y-auto space-y-2 mb-4 hide-scroll"></div>
+            <div class="border-t border-white/[.08] pt-4 space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-slate-400 text-sm">Total</span>
+                <span id="cart-total" class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">₹0</span>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-400 mb-1.5 uppercase tracking-widest">Pickup Time Slot</label>
+                <select id="pickup-time" class="input-field appearance-none cursor-pointer text-sm"></select>
+              </div>
+              <button id="checkout-btn" class="btn-primary w-full justify-center text-base py-3 font-bold" disabled>
+                <i data-lucide="zap" class="w-5 h-5"></i> Checkout &amp; Get QR
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+            lucide.createIcons();
+
+            // Populate time slots (15-min intervals, next 2 hours)
+            const pickupSel = document.getElementById('pickup-time');
+            const now = new Date();
+            for (let i = 1; i <= 8; i++) {
+                const t = new Date(now.getTime() + i * 15 * 60000);
+                const label = t.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                pickupSel.innerHTML += `<option value="${label}">${label}</option>`;
+            }
+
+            let menuFilter = 'All';
+            const menuGrid = document.getElementById('menu-grid');
+            const cartList = document.getElementById('cart-list');
+            const cartTotal = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            function renderMenu() {
+                const items = DB.menu.filter(m => menuFilter === 'All' || m.category === menuFilter);
+                menuGrid.innerHTML = items.map((item, i) => `
+      <div class="glass rounded-2xl overflow-hidden flex flex-col transition-all duration-300 ${!item.available ? 'opacity-50 grayscale' : ''} animate-slide-up" style="animation-delay:${i * 40}ms">
+        <div class="relative h-36 overflow-hidden group">
+          <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy"
+            onerror="this.src='https://via.placeholder.com/300x300/1e293b/6366f1?text=${encodeURIComponent(item.name)}'">
+          <div class="absolute inset-0 bg-gradient-to-t from-bg/70 to-transparent"></div>
+          <span class="absolute top-2 right-2 badge ${item.available ? 'badge-success' : 'badge-danger'}">
+            ${item.available ? 'Available' : 'Unavailable'}
+          </span>
+        </div>
+        <div class="p-4 flex flex-col flex-grow">
+          <h4 class="font-bold text-sm flex-grow">${item.name}</h4>
+          <p class="text-xs text-slate-500 mb-3">${item.category}</p>
+          <div class="flex justify-between items-center">
+            <span class="font-extrabold text-green-400">₹${item.price}</span>
+            <button class="add-item-btn w-8 h-8 rounded-lg bg-primary/20 border border-primary/40 text-primary hover:bg-primary hover:text-white transition-all flex items-center justify-center"
+              data-mid="${item.id}" ${!item.available ? 'disabled' : ''} title="Add to cart">
+              <i data-lucide="plus" class="w-4 h-4 pointer-events-none"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+                lucide.createIcons();
+                menuGrid.querySelectorAll('.add-item-btn').forEach(btn => {
+                    btn.addEventListener('click', e => {
+                        const id = e.currentTarget.dataset.mid;
+                        const item = DB.menu.find(m => m.id === id);
+                        const existing = cart.find(c => c.id === id);
+                        if (existing) existing.qty++;
+                        else cart.push({ ...item, qty: 1 });
+                        renderCart();
+                        toast(`${item.name} added to cart`, 'success');
+                    });
+                });
+            }
+
+            function renderCart() {
+                if (!cart.length) {
+                    cartList.innerHTML = `<div class="text-center py-8 text-slate-600 flex flex-col items-center gap-2">
+        <i data-lucide="shopping-cart" class="w-10 h-10 opacity-30"></i>
+        <p class="text-sm">Your cart is empty</p>
+      </div>`;
+                    cartTotal.textContent = '₹0';
+                    checkoutBtn.disabled = true;
+                    lucide.createIcons({ nodes: [cartList] });
+                    return;
+                }
+                const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+                cartList.innerHTML = cart.map((item, i) => `
+      <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white/[.04] border border-white/[.06] animate-fade-in" style="animation-delay:${i * 30}ms">
+        <span class="text-sm font-medium truncate flex-grow">${item.name}</span>
+        <span class="text-xs text-green-400 font-bold shrink-0">₹${item.price * item.qty}</span>
+        <div class="flex items-center gap-1 shrink-0 bg-black/20 rounded-lg p-0.5">
+          <button class="cart-dec w-6 h-6 rounded-md hover:bg-white/10 transition flex items-center justify-center" data-cid="${item.id}">
+            <i data-lucide="minus" class="w-3 h-3 pointer-events-none"></i>
+          </button>
+          <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+          <button class="cart-inc w-6 h-6 rounded-md hover:bg-white/10 transition flex items-center justify-center" data-cid="${item.id}">
+            <i data-lucide="plus" class="w-3 h-3 pointer-events-none"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+                cartTotal.textContent = `₹${total}`;
+                checkoutBtn.disabled = false;
+                lucide.createIcons({ nodes: [cartList] });
+
+                cartList.querySelectorAll('.cart-dec').forEach(btn => btn.addEventListener('click', e => {
+                    const id = e.currentTarget.dataset.cid;
+                    const item = cart.find(c => c.id === id);
+                    if (item.qty > 1) item.qty--;
+                    else cart = cart.filter(c => c.id !== id);
+                    renderCart();
+                }));
+                cartList.querySelectorAll('.cart-inc').forEach(btn => btn.addEventListener('click', e => {
+                    cart.find(c => c.id === e.currentTarget.dataset.cid).qty++;
+                    renderCart();
+                }));
+            }
+
+            checkoutBtn.addEventListener('click', () => {
+                if (!cart.length) return;
+                const orderId = 'ORD-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+                const pickup = pickupSel.value;
+                const order = { id: orderId, items: cart.map(c => ({ name: c.name, qty: c.qty, price: c.price })), total, pickup, status: 'Pending', ts: Date.now() };
+                DB.orders.push(order);
+                persist();
+
+                // Show modal
+                document.getElementById('m-id').textContent = orderId;
+                document.getElementById('m-pick').textContent = pickup;
+                document.getElementById('m-total').textContent = `₹${total}`;
+
+                const qrTarget = document.getElementById('qrcode-target');
+                qrTarget.innerHTML = '';
+                new QRCode(qrTarget, {
+                    text: JSON.stringify({ orderId, verify: true }),
+                    width: 180, height: 180,
+                    colorDark: '#000000', colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                document.getElementById('qr-modal').classList.remove('hidden');
+                lucide.createIcons({ nodes: [document.getElementById('qr-modal')] });
+
+                cart = [];
+                renderCart();
+                toast('Order placed! Show QR at canteen counter.', 'success');
+            });
+
+            document.getElementById('qr-modal-close').addEventListener('click', () =>
+                document.getElementById('qr-modal').classList.add('hidden')
+            );
+
+            app.querySelectorAll('.can-cat').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    menuFilter = e.currentTarget.dataset.ccat;
+                    app.querySelectorAll('.can-cat').forEach(b => {
+                        b.classList.remove('!border-primary', '!text-white', 'bg-primary/20');
+                        b.classList.add('text-slate-400', 'border-white/[.08]');
+                    });
+                    e.currentTarget.classList.add('!border-primary', '!text-white', 'bg-primary/20');
+                    e.currentTarget.classList.remove('text-slate-400', 'border-white/[.08]');
+                    renderMenu();
+                });
+            });
+
+            renderMenu();
+            renderCart();
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ██████████  VENDOR VIEW  ██████████
+        // ═══════════════════════════════════════════════════════
+        function renderVendor(app) {
+            app.innerHTML = `
+    <div class="animate-slide-up">
+      <div class="mb-8">
+        <h1 class="text-3xl font-extrabold mb-1 text-transparent bg-clip-text bg-gradient-to-r from-secondary to-primary">Vendor Dashboard</h1>
+        <p class="text-slate-400">Manage inventory, fulfil restock requests, and verify student orders.</p>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="glass rounded-2xl p-5 text-center">
+          <p class="text-3xl font-black text-primary">${DB.products.filter(p => p.stock > 0).length}</p>
+          <p class="text-xs text-slate-400 mt-1 font-medium">Items In Stock</p>
+        </div>
+        <div class="glass rounded-2xl p-5 text-center">
+          <p class="text-3xl font-black text-secondary">${DB.products.filter(p => p.requests > 0).length}</p>
+          <p class="text-xs text-slate-400 mt-1 font-medium">Restock Requests</p>
+        </div>
+        <div class="glass rounded-2xl p-5 text-center">
+          <p class="text-3xl font-black text-green-400">${DB.orders.filter(o => o.status === 'Pending').length}</p>
+          <p class="text-xs text-slate-400 mt-1 font-medium">Pending Orders</p>
+        </div>
+        <div class="glass rounded-2xl p-5 text-center">
+          <p class="text-3xl font-black text-yellow-400">${DB.menu.filter(m => !m.available).length}</p>
+          <p class="text-xs text-slate-400 mt-1 font-medium">Items Unavailable</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left column: Restock + Inventory -->
+        <div class="lg:col-span-2 space-y-8">
+
+          <!-- Restock Requests -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-lg font-bold mb-5 flex items-center gap-2">
+              <i data-lucide="flame" class="w-5 h-5 text-secondary"></i> High-Demand Restock Requests
+            </h3>
+            <div id="restock-list" class="space-y-3 max-h-80 overflow-y-auto hide-scroll"></div>
+          </div>
+
+          <!-- Inventory Controls with Tabs -->
+          <div class="glass rounded-2xl p-6">
+            <div class="flex justify-between items-center mb-6">
+              <h3 class="text-lg font-bold flex items-center gap-2">
+                <i data-lucide="settings-2" class="w-5 h-5 text-primary"></i> Availability Controls
+              </h3>
+              <div class="flex gap-1 bg-black/20 p-1 rounded-lg border border-white/[.06]">
+                <button id="v-tab-store"   class="px-3 py-1 text-xs font-bold rounded-md bg-primary/20 text-primary transition-all">Store</button>
+                <button id="v-tab-canteen" class="px-3 py-1 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-all">Canteen</button>
+              </div>
+            </div>
+            <div id="inventory-list" class="space-y-3 max-h-96 overflow-y-auto hide-scroll"></div>
+          </div>
+
+        </div><!-- /left -->
+
+        <!-- Right column: QR Scanner -->
+        <div>
+          <div class="glass rounded-2xl p-6 sticky top-24">
+            <h3 class="text-lg font-bold mb-4 pb-4 border-b border-white/[.08] flex items-center gap-2">
+              <i data-lucide="scan-line" class="w-5 h-5 text-primary"></i> Scan Student QR
+            </h3>
+            <div id="qr-reader" class="mb-4 rounded-2xl overflow-hidden min-h-[240px]"></div>
+            <div id="scan-result" class="hidden animate-fade-in space-y-3">
+              <div class="glass rounded-xl p-4 text-sm space-y-2">
+                <div class="flex justify-between"><span class="text-slate-400">Order ID</span><span id="sr-id" class="font-mono font-bold"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Pickup</span><span id="sr-pickup"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Status</span><span id="sr-status"></span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Total</span><span id="sr-total" class="font-bold text-green-400"></span></div>
+              </div>
+              <button id="btn-pickup" class="btn-primary w-full justify-center hidden">
+                <i data-lucide="package-check" class="w-4 h-4"></i> Mark as Picked Up
+              </button>
+              <button id="btn-scan-again" class="btn-outline w-full justify-center text-sm">
+                <i data-lucide="camera" class="w-4 h-4"></i> Scan Another
+              </button>
+            </div>
+          </div>
+        </div><!-- /right -->
+      </div>
+    </div>
+  `;
+            lucide.createIcons();
+
+            // ── Restock ──
+            function renderRestockList() {
+                const items = DB.products.filter(p => p.requests > 0).sort((a, b) => b.requests - a.requests);
+                const container = document.getElementById('restock-list');
+                if (!items.length) {
+                    container.innerHTML = `<p class="text-slate-500 italic text-sm text-center py-6">No active restock requests right now.</p>`;
+                    return;
+                }
+                container.innerHTML = items.map((p, i) => `
+      <div class="flex items-center gap-3 p-3 bg-white/[.04] rounded-xl border border-white/[.06] hover:border-secondary/30 transition-colors animate-slide-up" style="animation-delay:${i * 40}ms">
+        <img src="${p.img}" class="w-10 h-10 rounded-lg object-cover shrink-0" loading="lazy"
+          onerror="this.src='https://via.placeholder.com/40x40/1e293b/6366f1?text=?'">
+        <div class="flex-grow min-w-0">
+          <h5 class="text-sm font-semibold truncate">${p.name}</h5>
+          <p class="text-xs text-secondary flex items-center gap-1">
+            <i data-lucide="users" class="w-3 h-3"></i> ${p.requests} student${p.requests !== 1 ? 's' : ''} requested
+          </p>
+        </div>
+        <div class="relative w-12 h-1.5 bg-surface rounded-full overflow-hidden mr-2 shrink-0">
+          <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-primary to-secondary rounded-full" style="width:${Math.min(p.requests / 20 * 100, 100)}%"></div>
+        </div>
+        <button class="do-restock btn-primary !py-1.5 !px-3 text-xs shrink-0" data-pid="${p.id}">
+          Restock
+        </button>
+      </div>
+    `).join('');
+                lucide.createIcons({ nodes: [container] });
+                container.querySelectorAll('.do-restock').forEach(btn => btn.addEventListener('click', e => {
+                    const id = e.currentTarget.dataset.pid;
+                    const p = DB.products.find(x => x.id === id);
+                    p.stock += 20; p.requests = 0;
+                    persist();
+                    toast(`${p.name} restocked (+20 units)`, 'success');
+                    renderRestockList();
+                    renderInventoryList();
+                }));
+            }
+
+            // ── Inventory ──
+            let vTab = 'store';
+            function renderInventoryList() {
+                const container = document.getElementById('inventory-list');
+                if (vTab === 'store') {
+                    container.innerHTML = DB.products.map((p, i) => `
+        <div class="flex items-center justify-between p-3 bg-white/[.04] rounded-xl border border-white/[.06] hover:border-white/[.12] transition-colors animate-slide-up" style="animation-delay:${i * 30}ms">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-2 h-2 rounded-full shrink-0 pulse-dot ${p.stock > 0 ? 'bg-green-500' : 'bg-red-500'}"></span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold truncate">${p.name}</p>
+              <p class="text-xs text-slate-500">Stock: ${p.stock}</p>
+            </div>
+          </div>
+          <label class="toggle-switch shrink-0">
+            <input type="checkbox" ${p.stock > 0 ? 'checked' : ''} data-stoggle="${p.id}">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      `).join('');
+                    container.querySelectorAll('[data-stoggle]').forEach(tog => tog.addEventListener('change', e => {
+                        const p = DB.products.find(x => x.id === e.target.dataset.stoggle);
+                        p.stock = e.target.checked ? 20 : 0;
+                        if (e.target.checked) p.requests = 0;
+                        persist();
+                        toast(`${p.name} ${e.target.checked ? 'marked In Stock' : 'marked Out of Stock'}`, e.target.checked ? 'success' : 'error');
+                        renderInventoryList(); renderRestockList();
+                    }));
+                } else {
+                    container.innerHTML = DB.menu.map((m, i) => `
+        <div class="flex items-center justify-between p-3 bg-white/[.04] rounded-xl border border-white/[.06] hover:border-white/[.12] transition-colors animate-slide-up" style="animation-delay:${i * 30}ms">
+          <div class="flex items-center gap-3 min-w-0">
+            <span class="w-2 h-2 rounded-full shrink-0 pulse-dot ${m.available ? 'bg-green-500' : 'bg-red-500'}"></span>
+            <div class="min-w-0">
+              <p class="text-sm font-semibold truncate">${m.name}</p>
+              <p class="text-xs text-slate-500">${m.category} · ₹${m.price}</p>
+            </div>
+          </div>
+          <label class="toggle-switch shrink-0">
+            <input type="checkbox" ${m.available ? 'checked' : ''} data-mtoggle="${m.id}">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      `).join('');
+                    container.querySelectorAll('[data-mtoggle]').forEach(tog => tog.addEventListener('change', e => {
+                        const m = DB.menu.find(x => x.id === e.target.dataset.mtoggle);
+                        m.available = e.target.checked;
+                        persist();
+                        toast(`${m.name} ${e.target.checked ? 'now available' : 'set as unavailable'}`, e.target.checked ? 'success' : 'error');
+                        renderInventoryList();
+                    }));
+                }
+            }
+
+            document.getElementById('v-tab-store').addEventListener('click', () => {
+                vTab = 'store';
+                document.getElementById('v-tab-store').classList.replace('text-slate-400', 'text-primary');
+                document.getElementById('v-tab-store').classList.add('bg-primary/20');
+                document.getElementById('v-tab-canteen').classList.remove('bg-primary/20');
+                document.getElementById('v-tab-canteen').classList.replace('text-primary', 'text-slate-400');
+                renderInventoryList();
+            });
+            document.getElementById('v-tab-canteen').addEventListener('click', () => {
+                vTab = 'canteen';
+                document.getElementById('v-tab-canteen').classList.replace('text-slate-400', 'text-primary');
+                document.getElementById('v-tab-canteen').classList.add('bg-primary/20');
+                document.getElementById('v-tab-store').classList.remove('bg-primary/20');
+                document.getElementById('v-tab-store').classList.replace('text-primary', 'text-slate-400');
+                renderInventoryList();
+            });
+
+            renderRestockList();
+            renderInventoryList();
+
+            // ── QR Scanner ──
+            let scanner = null;
+            let currentOrderId = null;
+            const scanResult = document.getElementById('scan-result');
+            const btnPickup = document.getElementById('btn-pickup');
+            const btnScanAgain = document.getElementById('btn-scan-again');
+
+            function startScanner() {
+                document.getElementById('qr-reader').classList.remove('hidden');
+                scanResult.classList.add('hidden');
+                scanner = new Html5QrcodeScanner('qr-reader', { fps: 10, qrbox: { width: 220, height: 220 }, aspectRatio: 1.0 }, false);
+                scanner.render(onScanSuccess, () => { });
+            }
+
+            function onScanSuccess(text) {
+                try {
+                    const data = JSON.parse(text);
+                    if (!data.orderId || !data.verify) { toast('Invalid QR code format', 'error'); return; }
+                    scanner.pause(true);
+                    document.getElementById('qr-reader').classList.add('hidden');
+                    scanResult.classList.remove('hidden');
+
+                    const order = DB.orders.find(o => o.id === data.orderId);
+                    currentOrderId = data.orderId;
+                    document.getElementById('sr-id').textContent = data.orderId;
+
+                    if (!order) {
+                        document.getElementById('sr-pickup').textContent = '—';
+                        document.getElementById('sr-status').innerHTML = `<span class="badge badge-danger">Not Found</span>`;
+                        document.getElementById('sr-total').textContent = '—';
+                        btnPickup.classList.add('hidden');
+                        toast('Order not found in database', 'error');
+                    } else {
+                        document.getElementById('sr-pickup').textContent = order.pickup;
+                        document.getElementById('sr-total').textContent = `₹${order.total}`;
+                        if (order.status === 'Picked Up') {
+                            document.getElementById('sr-status').innerHTML = `<span class="badge badge-success">Already Picked Up</span>`;
+                            btnPickup.classList.add('hidden');
+                        } else {
+                            document.getElementById('sr-status').innerHTML = `<span class="badge badge-info">Pending</span>`;
+                            btnPickup.classList.remove('hidden');
+                            btnPickup.classList.add('flex');
+                        }
+                    }
+                    lucide.createIcons({ nodes: [scanResult] });
+                } catch (e) {
+                    toast('Could not parse QR code', 'error');
+                }
+            }
+
+            btnPickup.addEventListener('click', () => {
+                if (!currentOrderId) return;
+                const order = DB.orders.find(o => o.id === currentOrderId);
+                if (order) { order.status = 'Picked Up'; persist(); }
+                document.getElementById('sr-status').innerHTML = `<span class="badge badge-success">Picked Up ✓</span>`;
+                btnPickup.classList.add('hidden');
+                toast('Order marked as Picked Up! 🎉', 'success');
+            });
+
+            btnScanAgain.addEventListener('click', () => {
+                if (scanner) { scanner.resume(); }
+                document.getElementById('qr-reader').classList.remove('hidden');
+                scanResult.classList.add('hidden');
+                currentOrderId = null;
+            });
+
+            setTimeout(startScanner, 200);
+
+            vendorCleanup = () => {
+                if (scanner) { scanner.clear().catch(() => { }); scanner = null; }
+            };
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // ██  INIT
+        // ═══════════════════════════════════════════════════════
+        navigate('store');
+    </script>
+</body>
+
+</html>
