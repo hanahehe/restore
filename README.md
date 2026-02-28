@@ -69,35 +69,32 @@ http://localhost:8000
 
 ## Project Documentation
 
-### For Software:
-
-#### Screenshots (Add at least 3)
-
+login interface
 <p align="center">
   <img src="./log.jpeg" alt="login page" width="100%">
 </p>
-login interface
 
 
+Real-time visibility of stationery and college goodies with "In Stock" or "Out of Stock" status.
 <p align="center">
   <img src="./inventory tracking.png" alt="inventory tracking page" width="100%">
 </p>
- Real-time visibility of stationery and college goodies with "In Stock" or "Out of Stock" status.
-
+ 
+A digital menu allowing students to order food in advance to avoid physical queues.
 <p align="center">
   <img src="./canteen pre order.png" alt="inventory tracking page" width="100%">
 </p>
-A digital menu allowing students to order food in advance to avoid physical queues.
 
+this is a vendor interface of canteen,where the vendors can see the prebooked food order
 <p align="center">
   <img src="./canteen.png" alt="vendor interface" width="100%">
 </p>
-this is a vendor interface of canteen,where the vendors can see the prebooked food order
 
+this is a vendor interface of store, where the vendor can see the products in demand
 <p align="center">
   <img src="./store.png" alt="vendor interface" width="100%">
 </p>
-this is a vendor interface of store, where the vendor can see the products in demand
+
 #### Diagrams
 
 **System Architecture:**
