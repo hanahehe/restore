@@ -99,13 +99,13 @@ this is a vendor interface of store, where the vendor can see the products in de
 
 **System Architecture:**
 
-![Architecture Diagram](docs/architecture.png)
-*Explain your system architecture - components, data flow, tech stack interaction*
+docs/system architechture.png
+
 
 **Application Workflow:**
 
-![Workflow](docs/workflow.png)
-*Add caption explaining your workflow*
+docs/workflow.png
+
 
 ---
 
@@ -128,7 +128,7 @@ this is a vendor interface of store, where the vendor can see the products in de
 ## Project Demo
 
 ### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
+
 
 *Explain what the video demonstrates - key features, user flow, technical highlights*
 
