@@ -85,7 +85,7 @@ A digital menu allowing students to order food in advance to avoid physical queu
   <img src="./canteen pre order.png" alt="inventory tracking page" width="100%">
 </p>
 
-this is a vendor interface of canteen,where the vendors can see the prebooked food order
+this is a vendor interface of canteen,where the vendors can see the prebooked food order along with QR code scanner for ending long canteen queues 
 <p align="center">
   <img src="./canteen.png" alt="vendor interface" width="100%">
 </p>
