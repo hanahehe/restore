@@ -1,0 +1,234 @@
+{
+    "users": [
+        {
+            "id": "u1",
+            "name": "Demo Student",
+            "email": "student@college.edu",
+            "password": "student123",
+            "role": "student",
+            "avatar": "DS"
+        },
+        {
+            "id": "u2",
+            "name": "Store Owner",
+            "email": "store@college.edu",
+            "password": "store123",
+            "role": "store_vendor",
+            "avatar": "SO"
+        },
+        {
+            "id": "u3",
+            "name": "Canteen Owner",
+            "email": "canteen@college.edu",
+            "password": "canteen123",
+            "role": "canteen_vendor",
+            "avatar": "CO"
+        }
+    ],
+    "products": [
+        {
+            "id": "p1",
+            "name": "Ruled Notebook",
+            "category": "Stationery",
+            "price": 50,
+            "stock": 15,
+            "requests": 0,
+            "img": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p2",
+            "name": "Premium Pen Set",
+            "category": "Stationery",
+            "price": 120,
+            "stock": 0,
+            "requests": 5,
+            "img": "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p3",
+            "name": "College Hoodie (Navy)",
+            "category": "Merch",
+            "price": 850,
+            "stock": 3,
+            "requests": 0,
+            "img": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p4",
+            "name": "Scientific Calculator",
+            "category": "Electronics",
+            "price": 950,
+            "stock": 0,
+            "requests": 12,
+            "img": "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p5",
+            "name": "Sticky Notes (200pc)",
+            "category": "Stationery",
+            "price": 40,
+            "stock": 50,
+            "requests": 0,
+            "img": "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p6",
+            "name": "College Coffee Mug",
+            "category": "Merch",
+            "price": 250,
+            "stock": 2,
+            "requests": 1,
+            "img": "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p7",
+            "name": "Whiteboard Marker Set",
+            "category": "Stationery",
+            "price": 80,
+            "stock": 0,
+            "requests": 7,
+            "img": "https://images.unsplash.com/photo-1587614313085-5da51cebd8ac?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p8",
+            "name": "College Water Bottle",
+            "category": "Merch",
+            "price": 350,
+            "stock": 8,
+            "requests": 0,
+            "img": "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p9",
+            "name": "Graph Paper Pad",
+            "category": "Stationery",
+            "price": 35,
+            "stock": 25,
+            "requests": 0,
+            "img": "https://images.unsplash.com/photo-1474377207190-a7d8b3334068?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "p10",
+            "name": "USB Flash Drive 32GB",
+            "category": "Electronics",
+            "price": 450,
+            "stock": 0,
+            "requests": 9,
+            "img": "https://images.unsplash.com/photo-1618410320928-25b14b2a5aae?w=300&h=300&fit=crop"
+        }
+    ],
+    "menu": [
+        {
+            "id": "m1",
+            "name": "Classic Burger",
+            "category": "Snacks",
+            "price": 80,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m2",
+            "name": "Cold Coffee",
+            "category": "Beverages",
+            "price": 60,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m3",
+            "name": "Veggie Sandwich",
+            "category": "Snacks",
+            "price": 50,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m4",
+            "name": "Masala Dosa",
+            "category": "Meals",
+            "price": 90,
+            "available": false,
+            "img": "https://images.unsplash.com/photo-1630383249863-714088898144?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m5",
+            "name": "Fresh Lime Soda",
+            "category": "Beverages",
+            "price": 40,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m6",
+            "name": "Paneer Rolls",
+            "category": "Snacks",
+            "price": 70,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m7",
+            "name": "Mango Smoothie",
+            "category": "Beverages",
+            "price": 75,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1570696516188-ade861b84a49?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m8",
+            "name": "Veg Fried Rice",
+            "category": "Meals",
+            "price": 100,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m9",
+            "name": "Samosa (2 pcs)",
+            "category": "Snacks",
+            "price": 30,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m10",
+            "name": "Lassi (Sweet)",
+            "category": "Beverages",
+            "price": 55,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m11",
+            "name": "French Fries",
+            "category": "Snacks",
+            "price": 60,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1576107232684-1279f3908581?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m12",
+            "name": "Nachos with Salsa",
+            "category": "Snacks",
+            "price": 85,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m13",
+            "name": "Onion Rings",
+            "category": "Snacks",
+            "price": 75,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1639024471283-03518883512d?w=300&h=300&fit=crop"
+        },
+        {
+            "id": "m14",
+            "name": "Garlic Bread",
+            "category": "Snacks",
+            "price": 65,
+            "available": true,
+            "img": "https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=300&h=300&fit=crop"
+        }
+    ]
+}
