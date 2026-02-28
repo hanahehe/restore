@@ -129,11 +129,12 @@ docs/workflow.png
 
 ### Video
 
-
-*Explain what the video demonstrates - key features, user flow, technical highlights*
+https://drive.google.com/file/d/1XmzPi14iu-hp8ad9mH8ePXL8rQmfiCTj/view?usp=sharing
+the video demonstrates the user interface ,access to live Inventory Tracking,pre ordering , requesting for outof stock products etc.
 
 ### Additional Demos
-[Add any extra demo materials/links - Live site, APK download, online demo, etc.]
+https://drive.google.com/file/d/11eecBJ6z4tKnsGpiNHLiQaueP1VgkbQU/view?usp=sharing
+this is the vendor interface where ,the vendor can see the demand , prebooked orders , time of pickup,
 
 ---
 
@@ -167,9 +168,7 @@ If you used AI tools during development, document them here for transparency:
 
 ## Team Contributions
 
-- [Name 1]: [Specific contributions - e.g., Frontend development, API integration, etc.]
-- [Name 2]: [Specific contributions - e.g., Backend development, Database design, etc.]
-- [Name 3]: [Specific contributions - e.g., UI/UX design, Testing, Documentation, etc.]
+- hana haris -(individual participant)full stack 
 
 ---
 
